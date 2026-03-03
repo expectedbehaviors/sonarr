@@ -132,17 +132,16 @@ externalSecrets:
     apiKeyRef:
       key: sonarr
       property: api_key
-    postgresCredentialsRef:
-      key: sonarr-postgresql-credentials
-      property: password
-    # Database mode for config.xml Postgres block: auto|sqlite|postgres|external-postgres
-    databaseMode: auto
-    enablePostgres: true
-    postgresUser: postgres
-    postgresPort: "5432"
-    postgresHost: ""
-    postgresMainDb: sonarr-main
-    postgresLogDb: sonarr-log
+    postgres:
+      method: bitnami
+      user: postgres
+      port: "5432"
+      host: ""
+      mainDb: sonarr-main
+      logDb: sonarr-log
+      credentialsRef:
+        key: sonarr-postgresql-credentials
+        property: password
     options:
       logLevel: Info
       port: "8989"

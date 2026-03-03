@@ -16,7 +16,7 @@ Baseline Helm chart for [Sonarr](https://sonarr.tv) (TV series manager). Uses th
 |--------|--------|---------|-------------|
 | **Bitnami PostgreSQL** | `postgresql.enabled` | `true` | Embedded Bitnami subchart. Set `false` when using operator or external DB. |
 | **CloudNativePG operator** | `postgresqlOperator.enabled` | `false` | Creates a `PostgresCluster` CRD. Requires CloudNativePG operator. Set `postgresql.enabled: false` when enabled. |
-| **External DB** | Both `false` | — | Use `externalSecrets.configXml.postgresHost` (and credentials) to point at your own PostgreSQL. |
+| **External DB** | `externalSecrets.configXml.postgres.method=external` | — | Set `externalSecrets.configXml.postgres.host` and credentials ref. |
 
 When using `postgresqlOperator`, set `postgresqlOperator.bootstrap.existingSecret` to a Secret with `password` key. The cluster service will be `{{ postgresqlOperator.clusterName }}-rw.{{ Release.Namespace }}.svc.cluster.local`.
 
@@ -24,10 +24,9 @@ When using `postgresqlOperator`, set `postgresqlOperator.bootstrap.existingSecre
 
 When `externalSecrets.enabled: true`, the chart creates an ExternalSecret that syncs `config.xml` from 1Password.
 
-- `externalSecrets.configXml.databaseMode` supports `auto`, `sqlite`, `postgres`, `external-postgres`.
-- In `auto`, Postgres tags are rendered only when Bitnami/PostgresOperator is enabled or an explicit `postgresHost` is provided.
-- In `sqlite`, all Postgres tags are omitted from `config.xml`.
-- Use `externalSecrets.configXml.enablePostgres` as an explicit override switch.
+- `externalSecrets.configXml.postgres.method` supports `bitnami`, `operator`, `external`, `sqlite`.
+- The selected method is the single source of truth for Postgres rendering in `config.xml`.
+- In `sqlite` mode, all `<Postgres*>` tags are omitted from `config.xml`.
 
 ## Key values
 
