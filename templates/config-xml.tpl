@@ -5,31 +5,35 @@
   Postgres host/user/db come from .Values.externalSecrets.configXml (Helm).
 */ -}}
 {{- $e := .Values.externalSecrets.configXml | default dict }}
+{{- $o := $e.options | default dict }}
 <Config>
-  <LogLevel>Info</LogLevel>
-  <Port>8989</Port>
-  <UrlBase></UrlBase>
-  <BindAddress>*</BindAddress>
-  <SslPort>9898</SslPort>
-  <EnableSsl>False</EnableSsl>
+  <LogLevel>{{ $o.logLevel | default "Info" }}</LogLevel>
+  <Port>{{ $o.port | default "8989" }}</Port>
+  <UrlBase>{{ $o.urlBase | default "" }}</UrlBase>
+  <BindAddress>{{ $o.bindAddress | default "*" }}</BindAddress>
+  <SslPort>{{ $o.sslPort | default "9898" }}</SslPort>
+  <EnableSsl>{{ $o.enableSsl | default "False" }}</EnableSsl>
   <ApiKey>__API_KEY__</ApiKey>
-  <AuthenticationMethod>Basic</AuthenticationMethod>
-  <Branch>develop</Branch>
-  <LaunchBrowser>False</LaunchBrowser>
-  <UpdateMechanism>Docker</UpdateMechanism>
-  <AnalyticsEnabled>False</AnalyticsEnabled>
-  <UpdateAutomatically>True</UpdateAutomatically>
-  <InstanceName>Sonarr</InstanceName>
-  <SslCertPath></SslCertPath>
-  <SslCertPassword></SslCertPassword>
-  <AuthenticationRequired>DisabledForLocalAddresses</AuthenticationRequired>
-  <Theme>dark</Theme>
+  <AuthenticationMethod>{{ $o.authenticationMethod | default "Basic" }}</AuthenticationMethod>
+  <Branch>{{ $o.branch | default "develop" }}</Branch>
+  <LaunchBrowser>{{ $o.launchBrowser | default "False" }}</LaunchBrowser>
+  <UpdateMechanism>{{ $o.updateMechanism | default "Docker" }}</UpdateMechanism>
+  <AnalyticsEnabled>{{ $o.analyticsEnabled | default "False" }}</AnalyticsEnabled>
+  <UpdateAutomatically>{{ $o.updateAutomatically | default "True" }}</UpdateAutomatically>
+  <InstanceName>{{ $o.instanceName | default "Sonarr" }}</InstanceName>
+  <SslCertPath>{{ $o.sslCertPath | default "" }}</SslCertPath>
+  <SslCertPassword>{{ $o.sslCertPassword | default "" }}</SslCertPassword>
+  <AuthenticationRequired>{{ $o.authenticationRequired | default "DisabledForLocalAddresses" }}</AuthenticationRequired>
+  <Theme>{{ $o.theme | default "dark" }}</Theme>
   <PostgresUser>{{ $e.postgresUser | default "postgres" }}</PostgresUser>
   <PostgresPassword>__POSTGRES_PASSWORD__</PostgresPassword>
   <PostgresPort>{{ $e.postgresPort | default "5432" }}</PostgresPort>
   <PostgresHost>{{ $e.postgresHost | default "postgresql-rw.postgresql.svc.cluster.local" }}</PostgresHost>
   <PostgresMainDb>{{ $e.postgresMainDb | default "sonarr-main" }}</PostgresMainDb>
   <PostgresLogDb>{{ $e.postgresLogDb | default "sonarr-log" }}</PostgresLogDb>
-  <ConsoleLogLevel>info</ConsoleLogLevel>
+  <ConsoleLogLevel>{{ $o.consoleLogLevel | default "info" }}</ConsoleLogLevel>
+{{- range $k, $v := $e.additionalOptions }}
+  <{{ $k }}>{{ $v }}</{{ $k }}>
+{{- end }}
 </Config>
 {{- end -}}

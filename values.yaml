@@ -135,6 +135,31 @@ externalSecrets:
     postgresCredentialsRef:
       key: sonarr-postgresql-credentials
       property: password
+    postgresUser: postgres
+    postgresPort: "5432"
+    postgresHost: postgresql-rw.postgresql.svc.cluster.local
+    postgresMainDb: sonarr-main
+    postgresLogDb: sonarr-log
+    options:
+      logLevel: Info
+      port: "8989"
+      urlBase: ""
+      bindAddress: "*"
+      sslPort: "9898"
+      enableSsl: "False"
+      authenticationMethod: Basic
+      branch: develop
+      launchBrowser: "False"
+      updateMechanism: Docker
+      analyticsEnabled: "False"
+      updateAutomatically: "True"
+      instanceName: Sonarr
+      sslCertPath: ""
+      sslCertPassword: ""
+      authenticationRequired: DisabledForLocalAddresses
+      theme: dark
+      consoleLogLevel: info
+    # additionalOptions: {} # map of extra <Key>Value</Key> elements to append into config.xml
 
 onepassworditem:
   enabled: true
