@@ -1,4 +1,15 @@
 # Baseline Sonarr. Override ingress host, persistence (existingClaim), postgresql (existingSecret), onepassworditem.items in your values.
+# PostgreSQL: use embedded Bitnami (postgresql.enabled, default) or CloudNativePG operator (postgresqlOperator.enabled).
+# When using postgresqlOperator, set postgresql.enabled: false.
+postgresqlOperator:
+  enabled: false
+  clusterName: sonarr-postgresql
+  instances: 1
+  storageSize: 5Gi
+  storageClass: ""
+  bootstrap:
+    existingSecret: ""
+
 sonarr:
   global:
     fullnameOverride: sonarr
@@ -95,6 +106,7 @@ sonarr:
         - path: /downloads
 
 postgresql:
+  enabled: true
   architecture: standalone
   auth:
     database: sonarr-main
@@ -108,6 +120,21 @@ postgresql:
       requests:
         cpu: "1"
         memory: 2Gi
+
+externalSecrets:
+  enabled: false
+  refreshInterval: 1h
+  secretStoreRef:
+    name: onepassword-connect
+    kind: ClusterSecretStore
+  configXml:
+    secretName: sonarr
+    apiKeyRef:
+      key: sonarr
+      property: api_key
+    postgresCredentialsRef:
+      key: sonarr-postgresql-credentials
+      property: password
 
 onepassworditem:
   enabled: true
