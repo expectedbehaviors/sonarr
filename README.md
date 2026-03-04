@@ -27,7 +27,9 @@ When `externalSecrets.enabled: true`, the chart creates an ExternalSecret that s
 
 - `externalSecrets.configXml.database` supports `bitnami`, `operator`, `external`, `sqlite`.
 - The selected mode is the single source of truth for Postgres rendering in `config.xml`.
+- If `database` is omitted, templates fall back to legacy `externalSecrets.configXml.postgres.method` for backward compatibility.
 - In `sqlite` mode, all `<Postgres*>` tags are omitted from `config.xml`.
+- Charts fail render for invalid/ambiguous DB combinations (for example `database=bitnami` while `postgresql.enabled=false`).
 
 ## Key values
 
