@@ -1,10 +1,23 @@
 # Baseline Sonarr. Override ingress host, persistence (existingClaim), postgresql (existingSecret), onepassworditem.items in your values.
+# Database mode for config.xml rendering is externalSecrets.configXml.database.
+# Defaults to sqlite (no Postgres block in config.xml) unless explicitly set.
+postgresqlOperator:
+  enabled: false
+  clusterName: sonarr-postgresql
+  instances: 1
+  storageSize: 5Gi
+  storageClass: ""
+  bootstrap:
+    existingSecret: ""
+
 sonarr:
   global:
     fullnameOverride: sonarr
   controllers:
     main:
       enabled: true
+      annotations:
+        argocd.argoproj.io/sync-wave: "1"
       defaultContainerOptions:
         image:
           repository: linuxserver/sonarr
@@ -95,6 +108,7 @@ sonarr:
         - path: /downloads
 
 postgresql:
+  enabled: false
   architecture: standalone
   auth:
     database: sonarr-main
@@ -108,6 +122,48 @@ postgresql:
       requests:
         cpu: "1"
         memory: 2Gi
+
+externalSecrets:
+  enabled: false
+  refreshInterval: 1h
+  secretStoreRef:
+    name: onepassword-connect
+    kind: ClusterSecretStore
+  configXml:
+    secretName: sonarr
+    apiKeyRef:
+      key: sonarr
+      property: api_key
+    database: sqlite # sqlite|bitnami|operator|external
+    postgres:
+      user: postgres
+      port: "5432"
+      host: ""
+      mainDb: sonarr-main
+      logDb: sonarr-log
+      credentialsRef:
+        key: sonarr-postgresql-credentials
+        property: password
+    options:
+      logLevel: Info
+      port: "8989"
+      urlBase: ""
+      bindAddress: "*"
+      sslPort: "9898"
+      enableSsl: "False"
+      authenticationMethod: Basic
+      branch: develop
+      launchBrowser: "False"
+      updateMechanism: Docker
+      analyticsEnabled: "False"
+      updateAutomatically: "True"
+      instanceName: Sonarr
+      sslCertPath: ""
+      sslCertPassword: ""
+      authenticationRequired: DisabledForLocalAddresses
+      theme: dark
+      consoleLogLevel: info
+    # additionalOptions: {} # map of extra <Key>Value</Key> elements to append into config.xml
 
 onepassworditem:
   enabled: true
